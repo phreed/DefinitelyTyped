@@ -24,7 +24,8 @@ declare module "n3" {
         interface Triple {
             subject: string,
             predicate: string,
-            object: string
+            object: string,
+            graph?: string
         }
 
         interface BlankTriple {
@@ -32,13 +33,8 @@ declare module "n3" {
             object: string
         }
 
-        // class Parser {
-        //    constructor(options?: ParserOptions);
-        // }
+
         function Parser(options?: ParserOptions): N3Parser;
-        // class StreamParser extends Parser {
-        //    constructor(options?: ParserOptions);
-        //}
         function StreamParser(options?: ParserOptions): N3StreamParser;
 
         interface ParserOptions {
@@ -60,19 +56,13 @@ declare module "n3" {
             parse(stream: fs.ReadStream, log: Logger): void;
         }
 
-        interface N3StreamParser extends N3Parser {
+        interface N3StreamParser extends N3Parser, fs.WriteStream {
             pipe(consumer: stream.Writable | N3StreamWriter): void;
         }
-
-        // interface fs.ReadStream {
-        //     pipe(parser: StreamParser): void;
-        // }
 
 
         function Writer(options: WriterOptions): N3Writer;
         function Writer(fd: any, options: WriterOptions): N3Writer;
-
-        function StreamWriter(options: WriterOptions): N3StreamWriter;
 
         interface N3Writer {
             addTriple(subject: string, predicate: string, object: string): void;
@@ -84,7 +74,10 @@ declare module "n3" {
             list(triple: string[]): string[];
         }
 
+        function StreamWriter(options: WriterOptions): N3StreamWriter;
+
         interface N3StreamWriter extends N3Writer {
+            pipe(consumer: NodeJS.WritableStream): void;
             pipe(consumer: stream.Writable): void;
         }
 
@@ -112,5 +105,6 @@ declare module "n3" {
             function expandPrefixedName(name: string, prefixes: Prefixes): string;
         }
     }
+
     export = N3;
 }

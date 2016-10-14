@@ -33,7 +33,7 @@ https://github.com/RubenVerborgh/N3.js/blob/master/README.md
 */
 
 function test_doc_rdf_to_triples_1() {
-    var parser = N3.Parser();
+    var parser: N3.N3Parser = N3.Parser();
     parser.parse('@prefix c: <http://example.org/cartoons#>.\n' +
         'c:Tom a c:Cat.\n' +
         'c:Jerry a c:Mouse;\n' +
@@ -57,13 +57,13 @@ function test_doc_rdf_to_triples_2() {
 }
 
 function test_doc_rdf_stream_to_triples_1() {
-    var parser = N3.Parser();
+    var parser: N3.N3Parser = N3.Parser();
     var rdfStream = fs.createReadStream('cartoons.ttl');
     parser.parse(rdfStream, console.log);
 
-    var streamParser = N3.StreamParser();
+    var streamParser: N3.N3StreamParser = N3.StreamParser();
     var rdfStream = fs.createReadStream('cartoons.ttl');
-    // rdfStream.pipe(streamParser);
+    rdfStream.pipe(streamParser);
     streamParser.pipe(new SlowConsumer());
 
     class SlowConsumer extends stream.Writable {
@@ -107,12 +107,12 @@ function test_doc_from_triples_to_rdf_stream() {
 }
 
 function test_doc_from_triple_stream_to_rdf_stream() {
-    var streamParser = N3.StreamParser(),
-        // inputStream = fs.createReadStream('cartoons.ttl'),
+    var streamParser: N3.N3StreamParser = N3.StreamParser(),
+        inputStream = fs.createReadStream('cartoons.ttl'),
         streamWriter = N3.StreamWriter({ prefixes: { c: 'http://example.org/cartoons#' } });
-    // inputStream.pipe(streamParser);
+    inputStream.pipe(streamParser);
     streamParser.pipe(streamWriter);
-    // streamWriter.pipe(process.stdout);
+    streamWriter.pipe(process.stdout);
 }
 
 function test_doc_blank_nodes_and_lists() {
